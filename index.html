@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Rei de Copas</title>
+</head>
+<body>
+  <header id="app-header">
+    <h1>⚽ Rei de <span>Copas</span></h1>
+    <div class="subtitle">Simulador de carreira de jogador de futebol — v2.2</div>
+  </header>
+
+  <!-- ============ CRIAÇÃO ============ -->
+  <div id="screen-create" class="card narrow">
+    <label>Nome na camisa</label>
+    <input id="p-name" type="text" maxlength="16" placeholder="Ex: Silva">
+    <div class="row">
+      <div><label>Número (1–99)</label><input id="p-number" type="number" min="1" max="99" value="10"></div>
+      <div><label>Posição</label><select id="p-pos"></select></div>
+    </div>
+    <label>Pé dominante</label>
+    <div class="toggle" id="foot-toggle">
+      <button type="button" data-foot="Direito" class="sel">Direito</button>
+      <button type="button" data-foot="Esquerdo">Esquerdo</button>
+    </div>
+    <label>Nacionalidade</label>
+    <select id="p-nat"></select>
+    <label>Modalidade</label>
+    <div class="toggle" id="mode-toggle">
+      <button type="button" data-mode="completa" class="sel">Completa (temporada a temporada)</button>
+      <button type="button" data-mode="rapida">Rápida (carreira inteira de uma vez)</button>
+    </div>
+    <label>Início de carreira</label>
+    <div class="toggle" id="start-toggle">
+      <button type="button" data-start="base" class="sel">Base (16 anos)</button>
+      <button type="button" data-start="pro">Direto no profissional (21 anos)</button>
+    </div>
+    <button class="primary" id="btn-start">Começar Carreira</button>
+    <div class="note">Escudos: o jogo procura na pasta <b>images/</b> ao lado deste arquivo; os do Brasileirão (Séries A e B) e da Liga Profesional argentina também vêm embutidos. Sem imagem, aparecem as iniciais do clube.</div>
+  </div>
+
+  <!-- ============ ESCOLHA DO PRIMEIRO CLUBE ============ -->
+  <div id="screen-club" class="frame hidden">
+    <h2 class="club-h">Escolha seu primeiro clube</h2>
+    <p class="muted small" id="club-intro" style="margin:0"></p>
+    <div class="cc-grid" id="club-cols"></div>
+  </div>
+
+  <!-- ============ CARREIRA ============ -->
+  <div id="screen-season" class="frame hidden">
+    <div class="game-grid">
+      <section>
+        <div class="hero">
+          <div class="ovr-box t-bronze" id="ovr-box"><small>OVR</small><b id="ui-ovr">0</b></div>
+          <div class="hero-card">
+            <div class="hero-bg" id="hero-bg"></div>
+            <div class="hero-wm" id="hero-wm"></div>
+            <div class="hero-main">
+              <div class="chips">
+                <span class="chip" id="ui-nat-chip"></span>
+                <span class="chip pink" id="ui-pos-chip"></span>
+                <span class="pname" id="ui-name"></span>
+              </div>
+              <div class="hero-club" id="ui-club"></div>
+            </div>
+            <div class="hero-side">
+              <span class="lbl">Idade</span><b id="ui-age"></b>
+              <span class="lbl">Valor</span><b id="ui-value"></b>
+            </div>
+          </div>
+        </div>
+
+        <div class="stats3">
+          <div><span class="lbl">Jogos</span><b><i>👕</i><span id="ui-games">0</span></b></div>
+          <div><span class="lbl">Gols</span><b><i>⚽</i><span id="ui-goals">0</span></b></div>
+          <div><span class="lbl">Ast</span><b><i>👟</i><span id="ui-assists">0</span></b></div>
+        </div>
+
+        <div class="trophies" id="ui-trophies"></div>
+        <div class="statusline" id="statusline"></div>
+        <div class="sep"></div>
+
+        <div class="event-banner hidden" id="event-banner"><span>📩 Há um <b>evento</b> aguardando sua decisão.</span><button id="btn-ver-evento">Ver evento</button></div>
+        <button class="primary" id="btn-simulate">Simular temporada ▶</button>
+        <button class="ghost hidden" id="btn-retire">Anunciar aposentadoria</button>
+
+        <div id="transfer-window" class="hidden">
+          <h3>Janela de transferências</h3>
+          <p id="tw-text">Chegaram ofertas depois do seu último trecho de carreira. Você pode aceitar uma ou ficar no clube.</p>
+          <div class="offers-grid" id="ui-offers"></div>
+        </div>
+      </section>
+
+      <section class="rightcol">
+        <div class="tabs" id="tabs">
+          <button data-tab="carreira" class="sel">CARREIRA</button>
+          <button data-tab="liga">LIGA</button>
+          <button data-tab="eventos">EVENTOS<span class="dot hidden" id="ev-dot"></span></button>
+          <button data-tab="selecao">SELEÇÃO</button>
+        </div>
+        <div class="table" id="tab-carreira"><div id="season-summary"></div><div id="career-table"></div></div>
+        <div id="tab-liga" class="hidden"></div>
+        <div id="tab-eventos" class="hidden"></div>
+        <div id="tab-selecao" class="hidden"></div>
+      </section>
+    </div>
+  </div>
+
+  <!-- ============ TORNEIO DE SELEÇÕES ============ -->
+  <div id="screen-torneio" class="frame hidden">
+    <div class="tor-head">
+      <div><div class="lbl gold" id="tor-comp"></div><div class="tor-title" id="tor-title"></div></div>
+      <div class="tor-steps" id="tor-steps"></div>
+    </div>
+    <div id="tor-body"></div>
+    <button class="primary" id="tor-next">Continuar</button>
+  </div>
+
+  <!-- ============ FIM DE CARREIRA ============ -->
+  <div id="screen-report" class="frame hidden">
+    <div class="final-top">
+      <div class="fcard" id="final-player"></div>
+      <div class="fcard sel-card" id="final-sel"></div>
+      <div class="fcard awards-card" id="final-awards"></div>
+    </div>
+    <div class="fcard perfil-card" id="final-perfil"></div>
+    <div class="clubs-big" id="final-clubs"></div>
+    <div id="final-more-wrap" class="hidden">
+      <div class="lbl more-title">Outras passagens</div>
+      <div class="clubs-more" id="final-more"></div>
+    </div>
+    <div class="final-actions">
+      <button class="pill-btn soft" id="btn-history">Ver histórico completo</button>
+      <button class="pill-btn" onclick="location.reload()">↻ Jogar novamente</button>
+    </div>
+    <div id="final-history" class="hidden">
+      <span class="lbl sec">Temporadas</span><div class="table" id="final-table"></div>
+      <span class="lbl sec">Seleção</span><div id="final-intl"></div>
+      <span class="lbl sec">Decisões da carreira</span><div class="log-list" id="final-events"></div>
+    </div>
+  </div>
+
+</div>
+<!-- ============ RELATÓRIO DA TEMPORADA (modal) ============ -->
+<div id="report-modal" class="modal hidden"><div class="modal-box"><button class="modal-x" aria-label="Fechar">×</button><div id="report-body"></div></div></div>
+<script type="module" src="/src/main.js"></script>
+</body>
+</html>
